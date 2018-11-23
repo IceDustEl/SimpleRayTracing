@@ -27,6 +27,79 @@ public class RayTrace : MonoBehaviour
 
 	void OnEnable()
     {
+        CaculateBoundingSpere();
+    }
+
+    void OnRenderImage(RenderTexture src, RenderTexture dst)
+    {
+        Graphics.Blit(src,dst, material);
+    }
+
+    void Update()
+    {
+        if (material)
+        {
+            SetRenderData();
+        }
+    }
+
+    /// <summary>
+    /// 设置材质数据
+    /// </summary>
+    void SetRenderData()
+    {
+        List<Vector4> list = new List<Vector4>();
+
+        int count = 0;
+        foreach (GameObject model in Models)
+        {
+            Matrix4x4 localToWorldMatrix = model.transform.localToWorldMatrix;
+
+            Mesh mesh = model.GetComponent<MeshFilter>().sharedMesh;
+
+            Vector3 origin = localToWorldMatrix.MultiplyPoint((Vector3)BoundingSpere[count]);
+
+            list.Add(new Vector4(origin.x, origin.y, origin.z, BoundingSpere[count].w * model.transform.lossyScale.x));     //加入包围球数据
+
+            list.Add(new Vector4(mesh.triangles.Length, 0));                                                                //加入顶点长度数据
+
+            count++;
+
+            for (int i = 0; i < mesh.triangles.Length; i++)                                                                  //材质数据
+            {
+                Vector4 vec = localToWorldMatrix.MultiplyPoint(mesh.vertices[mesh.triangles[i]]);
+
+                if (model.name == "Quad")
+                    vec.w = 1;
+
+                if (model.name == "Trillion")
+                    vec.w = 2;
+
+                if (model.name == "Pyramid")
+                    vec.w = 3;
+
+                if (model.name == "HdrPyramid")
+                    vec.w = 4;
+
+                list.Add(vec);
+
+            }
+        }
+
+        material.SetVectorArray("_Vertices", list);
+
+        material.SetVector("_LightPos", PointLight.transform.position);
+
+        material.SetVector("_MagicOrigin", MagicCricle.position);
+
+        material.SetFloat("_MagicAlpha", MagicAlpha);
+    }
+
+    /// <summary>
+    /// 计算所有几何体的包围球
+    /// </summary>
+    void CaculateBoundingSpere()
+    {
         BoundingSpere = new List<Vector4>();
         foreach (GameObject model in Models)
         {
@@ -59,62 +132,5 @@ public class RayTrace : MonoBehaviour
             }
             BoundingSpere.Add(new Vector4(origin.x, origin.y, origin.z, r));
         }
-    }
-
-    void OnRenderImage(RenderTexture src, RenderTexture dst)
-    {
-        Graphics.Blit(src,dst, material);
-    }
-
-    void Update()
-    {
-        if (material)
-        {
-            List<Vector4> list = new List<Vector4>();
-
-			int count = 0;
-            foreach (GameObject model in Models)
-            {
-                Matrix4x4 localToWorldMatrix = model.transform.localToWorldMatrix;
-
-				Mesh mesh = model.GetComponent<MeshFilter>().sharedMesh;
-
-				Vector3 origin = localToWorldMatrix.MultiplyPoint((Vector3)BoundingSpere[count]);
-
-				list.Add(new Vector4(origin.x, origin.y, origin.z, BoundingSpere[count].w * model.transform.lossyScale.x));
-
-				list.Add(new Vector4(mesh.triangles.Length,0));
-
-				count++;
-
-                for (int i = 0; i < mesh.triangles.Length; i++)
-                {
-                    Vector4 vec = localToWorldMatrix.MultiplyPoint(mesh.vertices[mesh.triangles[i]]);
-
-                    if (model.name == "Quad")
-                        vec.w = 1;
-
-                    if (model.name == "Trillion")
-                        vec.w = 2;
-
-					if (model.name == "Pyramid")
-						vec.w = 3;
-
-					if (model.name == "HdrPyramid")
-						vec.w = 4;
-
-					list.Add(vec);
-                    
-                }
-            }
-
-            material.SetVectorArray("_Vertices", list);
-
-			material.SetVector("_LightPos", PointLight.transform.position);
-
-			material.SetVector("_MagicOrigin", MagicCricle.position);
-
-			material.SetFloat("_MagicAlpha", MagicAlpha);
-		}
     }
 }

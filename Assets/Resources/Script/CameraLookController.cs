@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using DG.Tweening;
 
+// 响应鼠标点击和拖拽，控制摄像机缩放旋转
 public class CameraLookController : MonoBehaviour
 {
     public List<GameObject> TargetList;

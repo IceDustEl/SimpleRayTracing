@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
+//  物体旋转动画
 public class OnFocus : MonoBehaviour
 {
 	public Vector3 FocusAngle;

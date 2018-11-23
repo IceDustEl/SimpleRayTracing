@@ -79,6 +79,7 @@ Shader "Unlit/RayTracing"
 				float3 color;
 			};
 		 
+			//射线和三角形求交
 			 bool IntersectTriangle(float4 orig, float4 dir,
 				 float4 v0, float4 v1, float4 v2, inout Intersection intersection)
 			 {
@@ -141,6 +142,7 @@ Shader "Unlit/RayTracing"
 				 return true;
 			 }
 
+			 //射线和圆求交
 			 bool IntersectSphere(float3 orig, float3 dir, float3 sphereOrig, float radius)
 			 {
 				float t0, t1, t;
@@ -251,6 +253,7 @@ Shader "Unlit/RayTracing"
 
 			 uniform float4 _Vertices[700];
 
+			 //求射线和场景最近的交点
 			 bool HitScene(Ray ray, inout Intersection minIntersection, inout int matIndex, bool inGeometry)
 			 {
 				 bool hitAnything = false;
@@ -310,6 +313,7 @@ Shader "Unlit/RayTracing"
 				 return colour;
 			 }
 
+			 
 			 float4 TraceRay(Ray ray, float3 channel)
 			 {
 				 Ray rayTemp = ray;

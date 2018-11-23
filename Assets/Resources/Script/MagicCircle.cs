@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//  控制魔法阵渐入渐出动画
 public class MagicCircle : MonoBehaviour
 {
 	public RayTrace rayTrace;
